@@ -25,42 +25,6 @@ _start:
 
 	mov $_start, %esp // 设置栈指针
 
-	mov $0xe, %ah // 设置光标
-
-	mov $'H', %al
-	int $0x10
-
-	mov $'i', %al
-	int $0x10
-
-	mov $',', %al
-	int $0x10
-
-	mov $'Y', %al
-	int $0x10
-
-	mov $'U', %al
-	int $0x10
-
-	mov $'A', %al
-	int $0x10
-
-	mov $'N', %al
-	int $0x10
-
-	mov $'G', %al
-	int $0x10
-
-	mov $'A', %al
-	int $0x10
-
-	mov $'N', %al
-	int $0x10
-
-	mov $'G', %al
-	int $0x10
-
-
 read_loader: // 读取loader到内存
 	mov $0x8000, %bx // 0x8000是loader的加载地址
 	mov $0x2, %ah // 功能号：读磁盘
