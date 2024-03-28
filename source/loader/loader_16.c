@@ -92,7 +92,6 @@ static void itoa(uint32_t value, char* str, uint32_t base) {
 
 
 
-// Move the function declaration outside of the detect_memory function
 static void print_entry_info(SMAP_entry_t* entry) {
     char buffer[64];
 
@@ -116,9 +115,55 @@ static void print_entry_info(SMAP_entry_t* entry) {
 }
 
 
+/**
+ * Global Descriptor Table
+ * 0-4GB内存分段
+*/
+uint16_t gdt_table[][4] = {
+    {0, 0, 0, 0}, // 0x00
+    {0xFFFF, 0x0000,0x9a00,0x00cf}, // 0x08
+    {0xFFFF, 0x0000,0x9200,0x00cf}, // 0x10
+};
+
+
+
+/*
+    * 进入保护模式
+    * 1. 关中断
+    * 2. 打开A20地址线
+    * 3.. 设置GDT
+    * 4. 设置CR0的PE位
+    * 5. 远跳转到保护模式
+*/
+static void enter_protect_mode (void) {
+    cli();
+
+    // 打开A20地址线
+    uint8_t v = inb(0x92);
+    outb(0x92, v | 0x2);
+
+    /**
+     * 设置GDT
+     * GDT中的每一项称为描述符（Descriptor），包含了如下信息：
+        基地址（Base Address）：被描述的内存区域的起始地址。
+        段限（Segment Limit）：内存区域的大小。
+        访问权限（Access Rights）：定义了哪些程序或任务可以访问该内存区域，以及它们的访问方式（如可读、可写、执行等）。
+    */
+    lgdt((uint32_t)gdt_table, sizeof(gdt_table));
+
+    // 设置CR0的PE位
+    uint16_t cr0 = read_cr0();
+    cr0 |= 1 << 0; // 设置CR0的PE位为1
+    write_cr0(cr0);
+
+    // 远跳转到保护模式
+    // 0x08是GDT中的第二个描述符，表示代码段
+    far_jump(8, (uint32_t)protect_mode_entry);
+}
 
 void loader_entry(void) {
     show_msg("Hello, Yuangang Li!\r\n");
     detect_memory();
+    enter_protect_mode();
     for(;;) {}
 }

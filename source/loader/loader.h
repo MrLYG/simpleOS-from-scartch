@@ -3,7 +3,8 @@
 
 #include "comm/types.h"
 #include "comm/boot_info.h"
-
+#include "comm/cpu_instr.h"
+void protect_mode_entry (void);
 typedef struct SMAP_entry {
     uint32_t BaseL;
     uint32_t BaseH;
