@@ -14,4 +14,5 @@ typedef struct SMAP_entry {
     uint32_t ACPI; // 0 is usable, 1 is reserved
 }__attribute__((packed)) SMAP_entry_t;
 
+extern boot_info_t boot_info;
 #endif

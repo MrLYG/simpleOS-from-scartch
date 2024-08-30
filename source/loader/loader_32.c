@@ -49,5 +49,5 @@ void load_kernel(void)
     // 读取内核镜像, kernel文件放到了100号扇区
     // (使用命令dd if=kernel.elf of=$DISK1_NAME bs=512 conv=notrunc seek=100把kernel.elf文件写入到100号扇区)
     read_disk(100, 500, (uint8_t *)SYS_KERNEL_LOAD_ADDR);
-    ((void (*)(boot_info_t *))SYS_KERNEL_LOAD_ADDR)(); // 跳转到kernel的入口地址
+    ((void (*)(boot_info_t *))SYS_KERNEL_LOAD_ADDR)(&boot_info); // 跳转到kernel的入口地址
 }
